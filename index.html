@@ -2,59 +2,170 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="google-adsense-account" content="ca-pub-4465607676285389">
   <title>Snake.io Style Game</title>
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4465607676285389" crossorigin="anonymous"></script>
+
   <style>
-    body { margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh; font-family:Arial,sans-serif; color:white; }
-    canvas { background:#000; border:2px solid #444; }
-    .ad-banner { width:100%; text-align:center; margin-top:10px; }
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    #container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    canvas {
+      background: #000;
+      border: 2px solid #444;
+    }
+
+    .side-ad {
+      width: 120px;
+      height: 600px;
+      margin: 10px;
+    }
+
+    #bottom-ad {
+      width: 100%;
+      height: 90px;
+      margin-top: 10px;
+    }
   </style>
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4465607676285389"
-          crossorigin="anonymous"></script>
 </head>
 <body>
-  <div class="ad-banner">
-    <!-- Beispiel AdSense Banner -->
-    <ins class="adsbygoogle"
+
+  <div id="container">
+    <ins class="adsbygoogle side-ad"
          style="display:block"
          data-ad-client="ca-pub-4465607676285389"
-         data-ad-slot="1234567890"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+         data-ad-slot="1111111111"
+         data-ad-format="auto"></ins>
+
+    <canvas id="game" width="600" height="600"></canvas>
+
+    <ins class="adsbygoogle side-ad"
+         style="display:block"
+         data-ad-client="ca-pub-4465607676285389"
+         data-ad-slot="2222222222"
+         data-ad-format="auto"></ins>
   </div>
 
-  <canvas id="game" width="600" height="600"></canvas>
+  <ins class="adsbygoogle" 
+       id="bottom-ad"
+       style="display:block"
+       data-ad-client="ca-pub-4465607676285389"
+       data-ad-slot="3333333333"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
 
   <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    (adsbygoogle = window.adsbygoogle || []).push({});
+
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
+
     const grid = 20;
     let snake = [{ x: 10, y: 10 }];
-    let dx = 1, dy = 0;
+    let dx = 1;
+    let dy = 0;
     let food = { x: 15, y: 15 };
     let score = 0;
 
-    function gameLoop() { update(); draw(); }
+    function gameLoop() {
+      update();
+      draw();
+    }
+
     function update() {
       const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-      if (head.x < 0 || head.y < 0 || head.x >= canvas.width/grid || head.y >= canvas.height/grid) { resetGame(); return; }
-      for (let part of snake) { if (part.x===head.x && part.y===head.y) { resetGame(); return; } }
+
+      if (head.x < 0 || head.y < 0 || head.x >= canvas.width / grid || head.y >= canvas.height / grid) {
+        resetGame();
+        return;
+      }
+
+      for (let part of snake) {
+        if (part.x === head.x && part.y === head.y) {
+          resetGame();
+          return;
+        }
+      }
+
       snake.unshift(head);
-      if (head.x===food.x && head.y===food.y) { score++; spawnFood(); } else { snake.pop(); }
+
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        spawnFood();
+      } else {
+        snake.pop();
+      }
     }
+
     function draw() {
-      ctx.fillStyle="black"; ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.fillStyle="lime"; for(let part of snake){ ctx.fillRect(part.x*grid,part.y*grid,grid-2,grid-2); }
-      ctx.fillStyle="red"; ctx.fillRect(food.x*grid,food.y*grid,grid-2,grid-2);
-      ctx.fillStyle="white"; ctx.font="16px Arial"; ctx.fillText("Score: "+score,10,20);
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "lime";
+      for (let part of snake) {
+        ctx.fillRect(part.x * grid, part.y * grid, grid - 2, grid - 2);
+      }
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(food.x * grid, food.y * grid, grid - 2, grid - 2);
+
+      ctx.fillStyle = "white";
+      ctx.font = "16px Arial";
+      ctx.fillText("Score: " + score, 10, 20);
     }
-    function spawnFood(){ food.x=Math.floor(Math.random()*(canvas.width/grid)); food.y=Math.floor(Math.random()*(canvas.height/grid)); }
-    function resetGame(){ snake=[{x:10,y:10}]; dx=1; dy=0; score=0; spawnFood(); }
-    document.addEventListener("keydown",e=>{ if(e.key==="ArrowUp"&&dy===0){dx=0;dy=-1;} if(e.key==="ArrowDown"&&dy===0){dx=0;dy=1;} if(e.key==="ArrowLeft"&&dx===0){dx=-1;dy=0;} if(e.key==="ArrowRight"&&dx===0){dx=1;dy=0;} });
-    setInterval(gameLoop,100);
+
+    function spawnFood() {
+      food.x = Math.floor(Math.random() * (canvas.width / grid));
+      food.y = Math.floor(Math.random() * (canvas.height / grid));
+    }
+
+    function resetGame() {
+      snake = [{ x: 10, y: 10 }];
+      dx = 1;
+      dy = 0;
+      score = 0;
+      spawnFood();
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp" && dy === 0) {
+        dx = 0;
+        dy = -1;
+      }
+      if (e.key === "ArrowDown" && dy === 0) {
+        dx = 0;
+        dy = 1;
+      }
+      if (e.key === "ArrowLeft" && dx === 0) {
+        dx = -1;
+        dy = 0;
+      }
+      if (e.key === "ArrowRight" && dx === 0) {
+        dx = 1;
+        dy = 0;
+      }
+    });
+
+    setInterval(gameLoop, 100);
   </script>
 </body>
 </html>
